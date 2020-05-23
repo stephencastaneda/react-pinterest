@@ -17,6 +17,18 @@ class SingleBoard extends React.Component {
     pins: [],
   }
 
+  getInfo = () => {
+    const { boardId } = this.props;
+    boardsData.getSingleBoard(boardId)
+      .then((request) => {
+        const board = request.data;
+        this.setState({ board });
+        pinsData.getPinsByBoardId(boardId)
+          .then((pins) => this.setState({ pins }));
+      })
+      .catch((err) => console.error('unable to get single board:', err));
+  }
+
   componentDidMount() {
     const { boardId } = this.props;
     boardsData.getSingleBoard(boardId)
@@ -29,11 +41,17 @@ class SingleBoard extends React.Component {
       .catch((err) => console.error('unable to get single board:', err));
   }
 
+  removePin = (pinId) => {
+    pinsData.deletePin(pinId)
+      .then(() => this.getInfo())
+      .catch((err) => console.error('could not delete pin: ', err));
+  }
+
   render() {
     const { setSingleBoard } = this.props;
     const { board, pins } = this.state;
 
-    const makePins = pins.map((p) => <Pin key={p.id} pin={p}/>);
+    const makePins = pins.map((p) => <Pin key={p.id} pin={p} removePin={this.removePin}/>);
 
     return (
       <div className="SingleBoard">

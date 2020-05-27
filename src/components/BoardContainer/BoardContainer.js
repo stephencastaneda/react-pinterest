@@ -12,8 +12,6 @@ import Board from '../Board/Board';
 import './BoardContainer.scss';
 
 class BoardContainer extends React.Component {
-
-
   state = {
     boards: [],
     formOpen: false,
